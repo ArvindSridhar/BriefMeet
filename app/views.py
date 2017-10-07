@@ -1,17 +1,20 @@
-from app import app
+from app import app, db, models
+from app.controls import *
 
 @app.route("/")
 @app.route("/index")
 def index():
 	return "Please download BriefMeet from the app store."
 
-@app.route("/NewUser", methods = ["POST"])
+@app.route("/NewUser", methods = ["GET", "POST"])
 def new_user():
-	pass
+	add_person(db, models.User("Donald Trump", 1234, "God Emperor"))
+	return "User created"
 
 @app.route("/<user_id>/CreateEvent", methods = ["POST"])
 def create_event(userid):
 	pass
+
 @app.route("/SignUp", methods=["GET", "POST"])
 def sign_up():
 	pass

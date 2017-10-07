@@ -1,7 +1,6 @@
-from flask import Flask
+from flask import Flask, jsonify
 app = Flask(__name__)
 
-from app import views, models
 from pymongo import MongoClient
 
 
@@ -17,8 +16,5 @@ def db_connect():
     db.authenticate(DB_USER, DB_PASS)
     return db
 
-def add_person(db):
-    db.Users.insert({"name" : "check"})
-    
-def get_person(db):
-    return db.Users.find_one()
+db = db_connect()
+from app import views

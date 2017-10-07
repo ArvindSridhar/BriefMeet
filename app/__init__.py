@@ -1,12 +1,11 @@
 from flask import Flask
 app = Flask(__name__)
 
-from app import views
+from app import views, models
 from pymongo import MongoClient
 
 
-def get_db():
-    from pymongo import MongoClient
+def db_connect():
     DB_NAME = 'briefmeet-demo'
     DB_HOST = 'ds036577.mlab.com'
     DB_PORT = 36577
@@ -23,4 +22,3 @@ def add_person(db):
     
 def get_person(db):
     return db.Users.find_one()
-    

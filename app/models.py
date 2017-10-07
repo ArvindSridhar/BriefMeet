@@ -4,6 +4,9 @@ class User:
 		self.passhash = passhash
 		self.description = description
 		self.image = image
+		# Other attributes
+		self.friends = []
+		self.friend_requests = []
 			
 		def __repr__(self):
 			return "User({0}, {1}, {2}, {3})".format(self.name, str(self.passhash), self.description, str(self.image))

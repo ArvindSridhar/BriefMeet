@@ -27,6 +27,11 @@ function getEvents() {
   return fetch(url).then((res) => res.json());
 }
 
+function getEventsUsers(eid) {
+  var url = 'http://127.0.0.1:5000/events/' + eid +  '/users';
+  return fetch(url).then((res) => res.json());
+}
+
 class LoginScreen extends Component {
   static navigationOptions = {
     title: 'Login',
@@ -98,24 +103,19 @@ class LoginScreen extends Component {
 }
 
 class EventScreen extends Component {
-  
-
   constructor(props){
     super(props);
     this.state = {
       events: []
     }
   }
-
-
   componentWillMount(){
     getEvents().then((res)=> {
       this.setState({
-        events: res[0]
+        events: res
       })
     })
   }
-
   static navigationOptions = {
     title: 'Events',
     header: null,
@@ -125,21 +125,8 @@ class EventScreen extends Component {
     this.props.navigation.navigate('Roster');
   };
 
-
   render() {
-    console.log("Events: ", this.state.events)
-    // if ( this.state.loading ){
-    //   return (
-    //     <View style={{flex: 1, paddingTop: 20}}>
-    //       <ActivityIndicator />
-    //     </View>
-    //     );
-    // }
-
-
-
-
-
+    console.log("Events: ", this.state.events, this.state.events['description'])
     return (
       <View style= {{paddingTop: Constants.statusBarHeight, backgroundColor: '#ecf0f1'}}>
         
@@ -151,11 +138,11 @@ class EventScreen extends Component {
         />    
       <ScrollView >
             {
-              list.map((event, index) => (
+              this.state.events.map((event, index) => (
                   <Card key={index}>
-                    <Text>{event.name}</Text>
+                    <Text>{this.state.events[index]['headline']}</Text>
                     <Text style={{marginBottom: 10}}>
-                      {event.description}
+                      {this.state.events[index]['description']}
                     </Text>
 
                     <Button
@@ -196,9 +183,9 @@ class RosterScreen extends Component {
             {
               list.map((event, index) => (
                   <Card key={index}>
-                    <Text>{event.name}</Text>
+                    <Text>{this.state.events['headline']}</Text>
                     <Text style={{marginBottom: 10}}>
-                      {event.description}
+                      {this.state.events['description']}
                     </Text>
 
                     <Button

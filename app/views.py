@@ -91,16 +91,21 @@ def put_event_user(event_id):
 @app.route("/login", methods = ["POST"])
 def login():
 	if request.method == "POST":
+		print(request.get_data())
 		json = request.get_json()
+		print(json)
 		username = json.get("username")
 		passhash = json.get("passhash")
 		if None not in (username, passhash):
 			user = get_user(db, username)
-			if user.get("passhash") == passhash:
-				session["user_id"] = str(user.get("_id"))
-				return "Login successful"
+			if user:
+				if user.get("passhash") == passhash:
+					session["user_id"] = str(user.get("_id"))
+					return "Login successful"
+				else:
+					return "Invalid password"
 			else:
-				return "Invalid password"
+				return "User not found"
 	return "Could not login"
 
 @app.route("/logout", methods=["GET", "POST"])

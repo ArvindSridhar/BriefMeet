@@ -44,10 +44,10 @@ const list = [
 
 ]
 
-function getEvents() {
-  var url = 'http://127.0.0.1:5000/users/oski/events';
+function getEvents(user) {
+  var url = 'http://127.0.0.1:5000/users/' + user + '/events';
   console.log(url)
-  return fetch(url).then((res) => res.json());
+  return fetch(url).then((res) => res.json()).catch(function(error){console.error(error)});
 }
 
 function getEventsUsers(eid) {
@@ -70,7 +70,35 @@ class LoginScreen extends Component {
   
   _handleButtonPress = () => {
     //change back to Event
-    this.props.navigation.navigate('Events');
+    //make login request here
+    user = this.state.inputValue
+    passhash = this.state.inputValue2
+
+    var url = 'http://127.0.0.1:5000/login'
+    var val = '';
+    val = fetch(url, {
+      method: 'POST',
+      headers: {
+           'Accept': 'application/json',
+           'Content-Type': 'application/json',
+         },
+      body: JSON.stringify({
+          username: user,
+          passhash: passhash
+        })
+    })
+    .then((response) => response.text())
+    .then((responseText) => {
+      console.log(responseText);
+      val = responseText;
+
+      if (val == "Login successful") {
+          this.props.navigation.navigate('Events', {user: user});
+      } 
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   _handleTextChange = inputValue => {
@@ -135,7 +163,7 @@ class EventScreen extends Component {
     }
   }
   componentWillMount(){
-    getEvents().then((res)=> {
+    getEvents(this.props.navigation.state.params.user).then((res)=> {
       this.setState({
         events: res
       })

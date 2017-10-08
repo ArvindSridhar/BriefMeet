@@ -29,18 +29,39 @@ def create_event(user_id):
 		date = json.get("date")
 		description = json.get("description")
 		args = [headline, date, description]
-		if None not in args:
+		user = get_user_by_id(db, user_id)
+		if None not in args and user is not None:
 			add_event(db, models.Event(*args, user_id))
 			return "Event created"
 	return "Could not create event"
 
 @app.route("/users/<user_id>/events", methods = ["GET", "POST"])
 def pull_events(user_id):
+	print("there")
 	user = get_user_by_id(db, user_id)
 	if user:
 		return get_events(db, user_id)
 	return "Could not get events"
 
+@app.route("/events/<event_id>/users", methods = ["GET", "POST"])
+def pull_event_users(event_id):
+    event = get_event(db, event_id)
+    if event:
+        return get_event_users(db, event_id)
+    return "Event not found"
+
+@app.route("/events/<event_id>/users/post", methods = ["POST"])
+def put_event_user(event_id):
+	if request.method == "POST":
+		json = request.get_json()
+		user_id = json.get("user_id")
+		event = get_event(db, event_id)
+		user = get_user_by_id(db, user_id)
+		if event is not None and user is not None:
+			if user_id not in event.get("users"):
+				add_event_user(db, event_id, user_id)
+				return "User added to event"
+	return "Could not add user to event"
 
 @app.route("/login", methods = ["POST"])
 def login():

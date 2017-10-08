@@ -15,7 +15,8 @@ def get_user(db, username):
 
 def get_user_by_id(db, user_id):
     try:
-        return db.Users.find_one({"_id": ObjectId(user_id)})
+        if ObjectId.is_valid(user_id):
+            return db.Users.find_one({"_id": ObjectId(user_id)})
     except Exception as e:
         print(e)
 
@@ -34,13 +35,25 @@ def add_event(db, event):
 
 def get_event(db, event_id):
     try:
-        return db.Events.find_one({"_id": ObjectId(event_id)})
+        if ObjectId.is_valid(event_id):
+            return db.Events.find_one({"_id": ObjectId(event_id)})
     except Exception as e:
         print(e)
 
+def add_event_user(db, event_id, user_id):
+    try:
+        db.Events.update_one({"_id": ObjectId(event_id)},
+                             {"$push": {"users": user_id}})
+    except Exception as e:
+        print(e)
+
+def get_event_users(db, event_id):
+    event = get_event(db, event_id)
+    users = event.get("users")
+    return json_util.dumps(users)
+
 def get_events(db, user_id):
     try:
-        print(json_util.dumps(db.Events.find({"owner": user_id})))
         return json_util.dumps(db.Events.find({"owner": user_id}))
     except Exception as e:
         print(e)

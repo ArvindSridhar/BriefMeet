@@ -10,7 +10,7 @@ class User:
 		self.contact_requests = []
 			
 	def __repr__(self):
-		return "User({0}, {1}, {2}, {3})".format(self.username, self.fullname, str(self.passhash), repr(self.image))
+		return "User('{0}', '{1}', '{2}', '{3}')".format(self.username, self.fullname, str(self.passhash), repr(self.image))
 
 	@property
 	def data(self):
@@ -25,7 +25,7 @@ class Event:
 		self.users = users
 	
 	def __repr__(self):
-		return "Event({0}, {1}, {2}, {3})".format(self.headline, self.date, self.description, self.user)
+		return "Event('{0}', '{1}', '{2}', '{3}')".format(self.headline, self.date, self.description, self.user)
 
 	@property
 	def data(self):

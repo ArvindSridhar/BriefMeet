@@ -67,21 +67,26 @@ def put_event_user(event_id):
 	if request.method == "POST":
 		json = request.get_json()
 		username = json.get("username")
+		new_user = json.get("new_user")
+		#print(new_user)
 		event = get_event(db, event_id)
 		user = get_user(db, username)
-		user_id = str(user.get("_id"))
-		if event is not None and user is not None:
-			#if session.get("user_id") == str(user.get("_id")):
-			if user not in event.get("users"):
-				if user_id != event.get("owner"):
-					add_event_user(db, event_id, user)
-					return "User added to event"
+		#if session.get("user_id") == str(user.get("_id")):
+		if event is not None:
+			if user is not None:
+				if user not in event.get("users"):
+					if user_id != event.get("owner"):
+						add_event_user(db, event_id, user)
+						return "User added to event"
+					else:
+						return "Can't add owner to event"
 				else:
-					return "Can't add owner to event"
-			else:
-				return "User is already in event"
-			#else:
-			#	return "Not logged in"
+					return "User is already in event"
+			#elif new_user is not None:
+			#	add_event_user(db, event_id, models.User(*new_user))
+			#	return "User added to event"
+		#else:
+			#return "Not logged in"
 	return "Could not add user to event"
 
 @app.route("/login", methods = ["POST"])

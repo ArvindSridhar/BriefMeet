@@ -42,8 +42,9 @@ def get_event(db, event_id):
 
 def add_event_user(db, event_id, user_id):
     try:
-        db.Events.update_one({"_id": ObjectId(event_id)},
-                             {"$push": {"users": user_id}})
+        if ObjectId.is_valid(event_id):
+            db.Events.update_one({"_id": ObjectId(event_id)},
+                                 {"$push": {"users": user_id}})
     except Exception as e:
         print(e)
 

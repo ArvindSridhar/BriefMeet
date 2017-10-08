@@ -41,7 +41,7 @@ def pull_events(user_id):
 	user = get_user_by_id(db, user_id)
 	if user:
 		return get_events(db, user_id)
-	return "Could not get events"
+	return "User not found"
 
 @app.route("/events/<event_id>/users", methods = ["GET", "POST"])
 def pull_event_users(event_id):
@@ -59,8 +59,13 @@ def put_event_user(event_id):
 		user = get_user_by_id(db, user_id)
 		if event is not None and user is not None:
 			if user_id not in event.get("users"):
-				add_event_user(db, event_id, user_id)
-				return "User added to event"
+				if user_id != event.get("owner"):
+					add_event_user(db, event_id, user_id)
+					return "User added to event"
+				else:
+					return "Can't add owner to event"
+			else:
+				return "User is already in event"
 	return "Could not add user to event"
 
 @app.route("/login", methods = ["POST"])

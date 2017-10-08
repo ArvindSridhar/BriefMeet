@@ -50,7 +50,10 @@ def add_event_user(db, event_id, user_id):
 
 def get_event_users(db, event_id):
     event = get_event(db, event_id)
-    users = event.get("users")
+    user_ids = event.get("users")
+    users = []
+    for user_id in user_ids:
+        users.append(get_user_by_id(db, user_id))
     return json_util.dumps(users)
 
 def get_events(db, user_id):

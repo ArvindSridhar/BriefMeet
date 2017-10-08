@@ -96,11 +96,14 @@ def login():
 		passhash = json.get("passhash")
 		if None not in (username, passhash):
 			user = get_user(db, username)
-			if user.get("passhash") == passhash:
-				session["user_id"] = str(user.get("_id"))
-				return "Login successful"
+			if user:
+				if user.get("passhash") == passhash:
+					session["user_id"] = str(user.get("_id"))
+					return "Login successful"
+				else:
+					return "Invalid password"
 			else:
-				return "Invalid password"
+				return "User not found"
 	return "Could not login"
 
 @app.route("/logout", methods=["GET", "POST"])

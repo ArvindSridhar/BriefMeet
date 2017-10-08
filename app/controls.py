@@ -20,10 +20,10 @@ def get_user_by_id(db, user_id):
     except Exception as e:
         print(e)
 
-def add_contact(db, username, contact_id):
+def add_contact(db, username, contact):
     try:
         db.Users.update_one({"username": username},
-                            {"$push": {"contacts": contact_id}})
+                            {"$push": {"contacts": contact}})
     except Exception as e:
         print(e)
 
@@ -40,21 +40,21 @@ def get_event(db, event_id):
     except Exception as e:
         print(e)
 
-def add_event_user(db, event_id, user_id):
+def add_event_user(db, event_id, user):
     try:
         if ObjectId.is_valid(event_id):
             db.Events.update_one({"_id": ObjectId(event_id)},
-                                 {"$push": {"users": user_id}})
+                                 {"$push": {"users": user}})
     except Exception as e:
         print(e)
 
 def get_event_users(db, event_id):
-    event = get_event(db, event_id)
-    user_ids = event.get("users")
-    users = []
-    for user_id in user_ids:
-        users.append(get_user_by_id(db, user_id))
-    return json_util.dumps(users)
+    try:
+        event = get_event(db, event_id)
+        users = event.get("users")
+        return json_util.dumps(users)
+    except Exception as e:
+        print(e)
 
 def get_events(db, user_id):
     try:

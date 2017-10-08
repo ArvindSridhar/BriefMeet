@@ -17,33 +17,36 @@ def sign_up():
 		description = json.get("description")
 		args = [username, fullname, passhash, description]
 		if None not in args:
-			add_user(db, models.User(*args))
-			return "User created"
+			if get_user(db, username) is None:
+				add_user(db, models.User(*args))
+				return "User created"
+			else:
+				return "User already exists"
 	return "Could not add user"
 
-@app.route("/users/<user_id>/events/post", methods = ["POST"])
-def create_event(user_id):
+@app.route("/users/<username>/events/add", methods = ["POST"])
+def create_event(username):
 	if request.method == "POST":
 		json = request.get_json()
 		headline = json.get("headline")
 		date = json.get("date")
 		description = json.get("description")
 		args = [headline, date, description]
-		user = get_user_by_id(db, user_id)
+		user = get_user(db, username)
 		if None not in args and user is not None:
 			#if session.get("user_id") == str(user.get("_id")):
-			add_event(db, models.Event(*args, user_id))
+			add_event(db, models.Event(*args, str(user.get("_id"))))
 			return "Event created"
 			#else:
 			#	return "Not logged in"
 	return "Could not create event"
 
-@app.route("/users/<user_id>/events", methods = ["GET", "POST"])
-def pull_events(user_id):
-	user = get_user_by_id(db, user_id)
+@app.route("/users/<username>/events", methods = ["GET", "POST"])
+def pull_events(username):
+	user = get_user(db, username)
 	if user:
 		#if session.get("user_id") == str(user.get("_id")):
-		return get_events(db, user_id)
+		return get_events(db, str(user.get("_id")))
 		#else:
 		#	return "Not logged in"
 	return "User not found"
@@ -59,18 +62,19 @@ def pull_event_users(event_id):
         #    return "Not logged in"
     return "Event not found"
 
-@app.route("/events/<event_id>/users/post", methods = ["POST"])
+@app.route("/events/<event_id>/adduser", methods = ["POST"])
 def put_event_user(event_id):
 	if request.method == "POST":
 		json = request.get_json()
-		user_id = json.get("user_id")
+		username = json.get("username")
 		event = get_event(db, event_id)
-		user = get_user_by_id(db, user_id)
+		user = get_user(db, username)
+		user_id = str(user.get("_id"))
 		if event is not None and user is not None:
 			#if session.get("user_id") == str(user.get("_id")):
-			if user_id not in event.get("users"):
+			if user not in event.get("users"):
 				if user_id != event.get("owner"):
-					add_event_user(db, event_id, user_id)
+					add_event_user(db, event_id, user)
 					return "User added to event"
 				else:
 					return "Can't add owner to event"
@@ -97,17 +101,19 @@ def login():
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
-	session["user_id"] = None
+	#session["user_id"] = None
 	return "Logged out"
 
-@app.route("/users/<user_id>/addcontact/<contact_id>", methods = ["GET", "POST"])
-def make_contact(user_id, contact_id):
-	user = get_user_by_id(db, user_id)
+@app.route("/users/<username>/addcontact", methods = ["POST"])
+def make_contact(username):
+	json = request.get_json()
+	user = get_user(db, username)
+	contact_id = json.get("contact_id")
 	contact = get_user_by_id(db, contact_id)
 	if user is not None and contact is not None:
 		#if session.get("user_id") == str(user.get("_id")):
-		if contact_id not in user.get("contacts") and contact_id != str(user.get("_id")):
-			add_contact(db, user.username, contact_id)
+		if contact not in user.get("contacts") and contact != user:
+			add_contact(db, username, contact)
 			return "Contact added"
 		#else:
 		#	return "Not logged in"

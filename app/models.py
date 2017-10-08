@@ -1,6 +1,7 @@
 class User:
-	def __init__(self, name, passhash, description, image=None):
-		self.name = name
+	def __init__(self, username, fullname, passhash, description, image=None):
+		self.username = username
+		self.fullname = fullname
 		self.passhash = passhash
 		self.description = description
 		self.image = image

@@ -1,4 +1,5 @@
 from bson.objectid import ObjectId
+from bson import json_util
 
 def add_user(db, user):
     try:
@@ -34,5 +35,12 @@ def add_event(db, event):
 def get_event(db, event_id):
     try:
         return db.Events.find_one({"_id": ObjectId(event_id)})
+    except Exception as e:
+        print(e)
+
+def get_events(db, user_id):
+    try:
+        print(json_util.dumps(db.Events.find({"owner": user_id})))
+        return json_util.dumps(db.Events.find({"owner": user_id}))
     except Exception as e:
         print(e)

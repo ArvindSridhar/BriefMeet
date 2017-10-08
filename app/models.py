@@ -17,10 +17,11 @@ class User:
 		return self.__dict__
 
 class Event:
-	def __init__(self, headline, date, description, users=[]):
+	def __init__(self, headline, date, description, owner, users=[]):
 		self.headline = headline
 		self.date = date
 		self.description = description
+		self.owner = owner
 		self.users = users
 	
 	def __repr__(self):
